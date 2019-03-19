@@ -1,14 +1,14 @@
-var app = require('express')();
+var express = require('express')
+var app = express();
 var http = require('http').Server(app);
 
 const Jimp = require('jimp');
 const replaceColor = require('replace-color');
 
 app.get('/', function(req, res){
-  res.sendFile(__dirname + '/html/index.html');
+  res.sendFile(__dirname + '/public/index.html');
 });
 app.get('/graphics/tank', function(req, res){
-  console.log(req.query);
   replaceColor({
     image: './public/graphics/tank.png',
     colors: {
@@ -17,16 +17,15 @@ app.get('/graphics/tank', function(req, res){
       replaceColor: req.query.color
     }
   }).then(function(image){
-    console.log(2);
     image.getBuffer(Jimp.MIME_PNG, function(err, result){
-      console.log(3);  
       if(err) res.status(500).send(err);
-      else res.status(200).send(new Buffer(result));
+      else res.status(200).send(new Buffer.from(result));
     });
   }).catch(function(err){
     res.status(500).send(err);
   });
 });
+app.use(express.static('public'));
 
 const com = require('./communication')(http);
 
