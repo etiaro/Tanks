@@ -1,0 +1,26 @@
+{
+  "name": "tanks",
+  "version": "1.0.0",
+  "description": "Tanks trouble game",
+  "main": "app.js",
+  "scripts": {
+    "test": "tank",
+    "start": "node server.js"
+  },
+  "author": "Etiaro",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.16.4",
+    "replace-color": "^2.0.0",
+    "socket.io": "^2.2.0"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/etiaro/Tanks.git"
+  },
+  "bugs": {
+    "url": "https://github.com/etiaro/Tanks/issues"
+  },
+  "homepage": "https://github.com/etiaro/Tanks#readme"
+}

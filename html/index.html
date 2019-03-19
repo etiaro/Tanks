@@ -1,0 +1,104 @@
+<html>
+  <head>
+    <title>Tanks alpha 0.3.1</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    
+    <script src="/socket.io/socket.io.js?4"></script>
+    <script src="/scripts/SAT.js?3"></script>
+    <script src="/scripts/physics.js?3"></script>
+    <script src="/scripts/socket.js?4"></script>
+    <script src="/scripts/movement.js?3"></script>
+    <style>
+      body, html { 
+        overflow: hidden; 
+      }
+      body{
+        padding: 0;
+        margin: 0;
+      }
+      #Playground{
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        transform-origin: center center;
+        border: 3px solid #555555;
+        background-color: #dddddd;
+        display: block;
+        position: fixed;
+        overflow: hidden;
+        z-index: 1;
+      }
+      #plNum{
+        position: fixed;
+      }
+      #fullscreenBtn{
+        background: url("graphics/fullscreen.png");
+        background-size: cover;
+        width: 100px;
+        height: 100px;
+        position: fixed;
+        right: 0;
+        bottom: 0;
+        z-index: 10;
+      }
+      .sq{
+        width: 100px;
+        height: 100px;
+        background-size: cover;
+        display: inline-block;
+        float: left;
+        margin: 0;
+        padding: 0;
+        border: 0;
+        z-index:5;
+      }
+      .player{
+        background: url('graphics/tank.png?3');
+        background-size: cover;
+        position: absolute;
+        height: 30px;
+        width: 45px;
+        transform-origin: center;
+        top: -15px;
+        left: -22.5px;
+        z-index: 4;
+      }
+      .bullet{
+        background-color: black;
+        position: absolute;
+        height: 8px;
+        width: 8px;
+        transform-origin: center;
+        border-radius: 100% 100% 100% 100%;
+        top: -4px;
+        left: -4px;
+        z-index: 3;
+      }
+      
+      .joystick{
+        position:fixed;
+        top:0;left:0;
+        background: rgba(0,0,0,0);
+        z-index:10;
+      }
+      .particle{
+        position: absolute; 
+        transform-origin: center;
+        top: 0;
+        left: 0;
+        z-index: 2;
+      }
+      .scoreEl{ font-size: 3em; }
+      .parHelper{ float: bottom; width: 100%; }
+    </style>
+  </head>
+  <body bgcolor="#FFFFFF" text="#000000">
+    <div id="background" style="position:fixed; width:100vw; height: 100vh; z-index: 0"></div>
+    <canvas id="controls" style="position:fixed; width:100vw; height: 100vh; background: rgba(0,0,0,0); z-index: 9"></canvas>
+    <div id="scoreboard" style="position:fixed; text-align:center; width:100vw; height: 100vh; background: rgb(0,0,0); z-index: 10; display: none"></div>
+    <div id="fullscreenBtn"></div>
+    <div id="Playground">
+    </div>
+  </body>
+</html>
