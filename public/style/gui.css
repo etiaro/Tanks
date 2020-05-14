@@ -1,0 +1,180 @@
+body, html { 
+  overflow: hidden; 
+}
+body{
+  padding: 0;
+  margin: 0;
+  background-color: WHITE;
+  color: BLACK;
+}
+#fullscreenBtn{
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  z-index: 10;
+  cursor: pointer;
+}
+#waiting{
+  height: 100%;
+  width: 100%;
+  position: relative;
+  background-color: rgba(0,0,0,0.8);
+  z-index: 11;
+}
+.waiting{
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  color: WHITE;
+  font-family: 'Balsamiq Sans', cursive;
+  font-size: 1.5em;
+  text-align: center;
+}
+#background{
+  position: fixed; 
+  width: 100vw; 
+  height: 100vh; 
+  z-index: 100;
+}
+#Form{
+  position: absolute;
+  top: 50%;
+  z-index: 101;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+.checkspan{
+  position: relative;
+  padding-left: 1em;
+  cursor: pointer;
+  user-select: none;
+  font-size: 2em;
+  font-family: 'Balsamiq Sans', cursive;
+  color: WHITE;
+}
+input[type=checkbox]{
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+.ccheckbox{  
+  position: absolute;
+  top: 0.2em;
+  left: 0;
+  height: 0.6em;
+  width: 0.6em;
+  border: solid white;
+  border-radius: 0.13em;
+}
+.checkspan:hover input ~ .ccheckbox{
+  background-color: rgba(0,0,0,0.15);
+}
+.checkspan:checked input ~ .ccheckbox{
+  background-color: #2196F3;
+}
+.ccheckbox:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+.checkspan .ccheckbox:after {
+  left: 0.2em;
+  top: 0.08em;
+  width: 0.15em;
+  height: 0.3em;
+  border: solid white;
+  border-width: 0 0.08em 0.08em 0;
+  transform: rotate(45deg);
+}
+/* Show the checkmark when checked */
+.checkspan input:checked ~ .ccheckbox:after {
+  display: block;
+}
+button{
+  padding: 5px;
+  background: none;
+  border: none;
+  border-bottom: white solid 0.1em;
+  color: white;
+  font-size: 2em;
+  text-align: center;
+  border-radius: 10px;
+  font-family: 'Balsamiq Sans', cursive;
+  float: right;
+  cursor: pointer;
+}
+button:hover, button:focus{
+  background-color: rgba(0,0,0,0.15);
+  outline: none;
+}
+input[type=text]{
+  padding: 5px;
+  background: none;
+  border: none;
+  border-bottom: white solid 0.1em;
+  color: white;
+  font-size: 2em;
+  width: 10em;
+  text-align: center;
+  border-radius: 10px;
+  font-family: 'Balsamiq Sans', cursive;
+  margin-bottom: 0.5em;
+}
+input[type=text]::placeholder{
+  color: rgba(255, 255, 255, 0.4);
+}
+input[type=text]:hover, input[type=text]:focus{
+  background-color: rgba(0,0,0,0.15);
+  outline: none;
+}
+#controls{
+  position: fixed; 
+  width: 100vw; 
+  height: 100vh; 
+  background: rgba(0,0,0,0); 
+  z-index: 9;
+}
+#scoreboard{
+  position: fixed; 
+  text-align: center; 
+  width: 100vw; 
+  height: 100vh; 
+  background: rgb(0,0,0); 
+  z-index: 10; 
+  display: none; 
+  font-family: 'Oswald', sans-serif;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+.joystick{
+  position:fixed;
+  top:0;left:0;
+  background: rgba(0,0,0,0);
+  z-index:6;
+}
+.scoreEl{ 
+  font-size: 3em; 
+}
+.parHelper{ 
+  float: bottom; 
+  width: 100%; 
+}
+
+#TutorialText{
+  position: absolute;
+  left: 50vw;
+  top: 50vh;
+  width: 90%;
+  transform: translate(-50%, -50%);
+  font-size: 3em;
+  font-family: 'Montserrat', sans-serif;
+  text-align: center;
+  color: rgb(255,255,255);
+  mix-blend-mode: exclusion;
+  z-index: 8;
+  transition: opacity 1s;
+  transition-timing-function: ease-in;
+}

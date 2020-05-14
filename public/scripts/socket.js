@@ -1,8 +1,15 @@
 var socket = io();
+var updatePlayers = ()=>{};
+var updateMap = ()=>{};
+var updateBullets = (b)=>{};
+
+var sId;
+var pls = {};
+var joinedPls;
+var actMap = {};
+var bulletList = [];
 
 window.addEventListener('load', function() {
-  var pls = {};
-  var actMap = {};
   var game = document.getElementById("Playground");
   
   function calibrateSize(){
@@ -16,28 +23,42 @@ window.addEventListener('load', function() {
   window.onresize = calibrateSize;
   
   
-  function updatePlayers(){
-    var elements = document.getElementsByClassName('player');
+  updatePlayers = function(){
+    var elements = document.getElementsByClassName('playerCont');
     for(var i = 0; i < elements.length; i++)
       if(!pls[elements[i].id.substr(2)])
         elements[i].parentElement.removeChild(elements[i]);
     
+    if(joinedPls>=2){
+      document.getElementById("Waiting").style.display = "none";
+    }else{
+      document.getElementById("Waiting").style.display = "block";
+    }
+    
     for(id in pls){
-      var pl = document.getElementById('pl'+id);
+      var pl = document.getElementById('pl'+id);//TODO add wrapper div which contains player and playernick, translate wrapper and rotate only player
       pls[id].lastTime = Date.now();
+      if(pls[id].sId == sId){
+        document.getElementById("background").style.backgroundColor = "#"+pls[id].col;
+      }
       if(!pls[id].dead){
         if(!pl){
           pl = document.createElement("div");
-          pl.className = "player";
+          pl.className = "playerCont";
           pl.id = 'pl'+id;
-          pl.style.transform = "translate("+pls[id].pos.x+"px ,"+pls[id].pos.y+"px) rotate("+pls[id].pos.rot+"deg)";
-          pl.style.backgroundImage = "url(graphics/tank?color=%23"+pls[id].col+")";
-          if(pls[id].sId == sId){
-            document.getElementById("background").style.backgroundColor = "#"+pls[id].col;
-          }
+          pl.style.transform = "translate("+pls[id].pos.x+"px ,"+pls[id].pos.y+"px)";
+          var name = document.createElement("div");
+          name.className = "playerName";
+          name.append(pls[id].name);
+          var tank = document.createElement("div");
+          tank.className = "player";
+          tank.style.transform = "rotate("+pls[id].pos.rot+"deg)";
+          tank.style.backgroundImage = "url(graphics/tank?color=%23"+pls[id].col+")";
+          pl.innerHTML = name.outerHTML + tank.outerHTML;
           game.appendChild(pl);
         }
-        pl.style.transform = "translate("+pls[id].pos.x+"px ,"+pls[id].pos.y+"px) rotate("+pls[id].pos.rot+"deg)";
+        pl.style.transform = "translate("+pls[id].pos.x+"px ,"+pls[id].pos.y+"px)";
+        pl.getElementsByClassName("player")[0].style.transform = "rotate("+pls[id].pos.rot+"deg)";
         /*if(pls[id].pos.particles){
           var particle = document.createElement("div");
           particle.className = "particle";
@@ -56,29 +77,8 @@ window.addEventListener('load', function() {
       }
     }
   }
-  
-  setInterval(function(){
-    for(id in pls){
-      var pl = document.getElementById('pl'+id);
-      if(!pls[id].dead){
-        //playermove
-        tankMove(pls[id].pos, pls[id].move, actMap);
-        pl.style.transform = "translate("+pls[id].pos.x+"px ,"+pls[id].pos.y+"px) rotate("+pls[id].pos.rot+"deg)";
-      }
-    }
-  },20);
-  
-  var sId;
-  socket.on('sId', function(id){
-    sId = id;
-  });
-  
-  socket.on('players', function(players){
-    pls = players;
-    updatePlayers();
-  });
-  socket.on('map', function(map){
-    actMap = map;
+  updateMap = function(){
+    map = actMap;
     game.innerHTML = "";
     game.style.minWidth = map.width*100;
     
@@ -106,10 +106,9 @@ window.addEventListener('load', function() {
     
     updatePlayers();
     calibrateSize();
-  });
+  };
   
-  var bulletList = [];
-  socket.on('bullets', function(bullets){
+  updateBullets = function(bullets){
     var elements = document.getElementsByClassName('bullet');
     
     for(id in bullets){
@@ -128,11 +127,18 @@ window.addEventListener('load', function() {
         bul.id = 'bul'+id;
         bul.style.transform = "translate("+bullets[id].x+"px ,"+bullets[id].y+"px) rotate("+bullets[id].rot+"deg)";
         game.appendChild(bul);
-        bulletList[id].inv = setInterval(function(){
+        const INV = bulletList[id].inv = setInterval(function(){
+          if(!bulletList.hasOwnProperty(bId)){
+            clearInterval(INV);
+            if(game.contains(bul))
+              game.removeChild(bul);
+            return;
+          }
           if(bulletList[bId].time <= 0){
             clearInterval(bulletList[bId].inv);
             if(game.contains(bul))
               game.removeChild(bul);
+            return;
           }
           bulletList[bId].time--;
           bulletMove(bulletList[bId], actMap, Date.now() - bulletList[bId].lastTime);
@@ -146,22 +152,72 @@ window.addEventListener('load', function() {
           game.removeChild(bul);
       }
     }
+  };
+  
+  setInterval(function(){
+    for(id in pls){
+      var pl = document.getElementById('pl'+id);
+      if(!pls[id].dead && joinedPls >= 2){
+        //playermove
+        tankMove(pls[id].pos, pls[id].move, actMap);
+        pl.style.transform = "translate("+pls[id].pos.x+"px ,"+pls[id].pos.y+"px)";
+        pl.getElementsByClassName("player")[0].style.transform = "rotate("+pls[id].pos.rot+"deg)";
+      }
+    }
+  },20);
+  
+  socket.on('sId', function(id){
+    sId = id;
+  });
+  socket.on('players', function(players){
+    if(tutorialStarted)
+      tutHandlePlayers(players);
+    else{
+      pls = players;
+      updatePlayers();
+    }
+  });
+  socket.on('joinedCount', function(joinedCount){
+    if(tutorialStarted)
+      tutHandleJoinedPls(joinedCount);
+    else{
+      joinedPls = joinedCount;
+      updatePlayers();
+    }
+  });
+  socket.on('map', function(map){
+    if(tutorialStarted)
+      tutHandleMap(map);
+    else{
+      actMap = map;
+      updateMap();
+    }
+  });
+  socket.on('bullets', function(bullets){
+    if(tutorialStarted)
+      tutHandleBulletList(bullets);
+    else
+      updateBullets(bullets);
   });
   
   socket.on('score', function(score){
-    var board = document.getElementById('scoreboard');
-    if(score.end)
-      board.style.display = 'none';
-    else{
-      board.innerHTML = '';
-      for(id in score){
-        var el = document.createElement('div');
-        el.className = 'scoreEl';
-        el.style.color = '#'+score[id].col;
-        el.innerHTML = score[id].name+' - '+score[id].score;
-        board.appendChild(el);
+    if(!tutorialStarted){
+      var board = document.getElementById('scoreboard');
+      if(score.end)
+        board.style.display = 'none';
+      else{
+        board.innerHTML = '';
+        for(id in score){
+          if(score[id].joined){
+            var el = document.createElement('div');
+            el.className = 'scoreEl';
+            el.style.color = '#'+score[id].col;
+            el.innerHTML = score[id].name+' - '+score[id].score;
+            board.appendChild(el);
+          }
+        }
+        board.style.display = 'block';
       }
-      board.style.display = 'block';
     }
   });
 });

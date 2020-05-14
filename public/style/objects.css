@@ -1,0 +1,69 @@
+#Playground{
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  transform-origin: center center;
+  border: 3px solid #555555;
+  background-color: #dddddd;
+  display: block;
+  position: fixed;
+  z-index: 1;
+}
+.sq{
+  width: 100px;
+  height: 100px;
+  background-size: cover;
+  display: inline-block;
+  float: left;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  z-index:5;
+}
+.playerCont{
+  background-size: cover;
+  position: absolute;
+  overflow: visible;
+  z-index: 4;
+  top: 0;
+  left: 0;
+}
+.playerName{
+  background-size: cover;
+  top: -60px;
+  position: absolute;
+  z-index: 6;
+  transform: translateX(-50%);
+  font-family: 'Oswald', sans-serif;
+  font-size: 15pt;
+  color: #999;
+}
+.player{
+  background: url('graphics/tank.png?3');
+  background-size: cover;
+  position: absolute;
+  height: 30px;
+  width: 45px;
+  transform-origin: center;
+  top: -15px;
+  left: -22.5px;
+  z-index: 4;
+}
+.bullet{
+  background-color: black;
+  position: absolute;
+  height: 8px;
+  width: 8px;
+  transform-origin: center;
+  border-radius: 100% 100% 100% 100%;
+  top: -4px;
+  left: -4px;
+  z-index: 3;
+}
+.particle{
+  position: absolute; 
+  transform-origin: center;
+  top: 0;
+  left: 0;
+  z-index: 2;
+}

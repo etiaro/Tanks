@@ -28,9 +28,11 @@ module.exports = function(http){
       if(playerHandler.map)
         playerHandler.map();
     });
-    socket.on('setName', function(name){
-      if(playerHandler.setName)
-        playerHandler.setName(name);
+    socket.on('join', function(name){
+      name = name.replace(/\s/g,'');
+      if(name === "") name = "guest";
+      if(playerHandler.join)
+        playerHandler.join(name);
     });
     
     var plId = plNum;
@@ -40,6 +42,9 @@ module.exports = function(http){
       'gId': plId.toString(),
       'sendPl': function(players){
         socket.emit('players', players);
+      },
+      'sendJoinedCount': function(joinedCount){
+        socket.emit('players', joinedCount);
       },
       'sendBul': function(bullets){
         socket.emit('bullets', bullets);
@@ -62,6 +67,9 @@ module.exports = function(http){
   };
   this.sendPl = function(players){
     io.emit('players', players);
+  };
+  this.sendJoinedCount = function(joinedCount){
+    io.emit('joinedCount', joinedCount);
   };
   this.changeMap = function(map){
     io.emit('map', map);

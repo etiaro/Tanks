@@ -34,6 +34,8 @@ http.listen(3000, function(){});
 function update(info){
   if(info.players)
     com.sendPl(info.players);
+  if(info.joinedCount)
+    com.sendJoinedCount(info.joinedCount);
   if(info.map)
     com.changeMap(info.map);
   if(info.bullets)
@@ -71,8 +73,9 @@ com.connListener(function(player){
     'map': function(){
       server.nextMap();
     },
-    'setName': function(name){
+    'join': function(name){
+      player.join();
       player.name = name;
-    }
+    } 
   });
 });

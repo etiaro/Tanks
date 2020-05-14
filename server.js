@@ -7,6 +7,7 @@ module.exports.start = function(update){
   var bulNum = 0;
   var bullets = {};
   var alivePl = 0;
+  var joinedPl = 0;
   var players = {};
   var plIndex = 0;
   
@@ -89,14 +90,16 @@ module.exports.start = function(update){
     }
 
     for(id in players){
-      if(!players[id].dead)
-        players[id].score++;
-      alivePl++;
-      players[id].pos = {'x': Math.floor(Math.random()*actMap.width)*100+50,
-                         'y': Math.floor(Math.random()*actMap.height)*100+50,
-                         'rot': Math.floor(Math.random()*360)};
-      players[id].dead = false;
-      players[id].bullets = 5;
+      if(players[id].joined){
+        if(!players[id].dead)
+          players[id].score++;
+        alivePl++;
+        players[id].pos = {'x': Math.floor(Math.random()*actMap.width)*100+50,
+                           'y': Math.floor(Math.random()*actMap.height)*100+50,
+                           'rot': Math.floor(Math.random()*360)};
+        players[id].dead = false;
+        players[id].bullets = 5;
+      }
     }
     
     update({'score': players});
@@ -127,51 +130,80 @@ module.exports.start = function(update){
     
     if(++timer == 50){
       timer = 0;
-      update({'players': players, 'bullets': bullets});
+      update({'players': players, 'joinedCount': joinedPl, 'bullets': bullets});
     }
   }, 20);
   
   
   function handleEnd(){
-    if(alivePl <= 1){
+    if(alivePl <= 1 && joinedPl >= 2){
       if(endTimeout)
         clearTimeout(endTimeout);
       endTimeout = setTimeout(function(){
         if(alivePl <= 1)
           server.nextMap();
-      }, 5000);
+      }, 3000);
     }
   }
   this.getPlayers = function(){return players};
   this.upd = function(){
-    update({'players': players, 'bullets': bullets});
+    update({'players': players, 'joinedCount': joinedPl, 'bullets': bullets});
   }
   this.addPlayer = function(p){
     p.sId = plIndex++;
     p.sendSID(p.sId);
-    alivePl++;
+    p.dead = true;
     p.score = 0;
     p.name = 'noname';
-    
-    p.pos = {'x': Math.floor(Math.random()*actMap.width)*100+50, 
-            'y': Math.floor(Math.random()*actMap.height)*100+50,
-            'rot': Math.floor(Math.random()*360)};
-    
     p.move = {'front': false,
-             'back': false,
-             'left': false,
-             'right': false};
+              'back': false,
+              'left': false,
+              'right': false};
+    
+    p.join = function(){
+      if(p.joined) {
+        return;
+      }
+      joinedPl++;
+      console.log(joinedPl);
+      if(joinedPl <= 2) {
+        p.dead = false;
+        alivePl++;
+      }
+      p.pos = {'x': Math.floor(Math.random()*actMap.width)*100+50, 
+               'y': Math.floor(Math.random()*actMap.height)*100+50,
+               'rot': Math.floor(Math.random()*360)};
+      
+      p.bullets = 5;
+      p.joined = true;
+      
+      setInterval(function(){
+        if(joinedPl < 2) return;
+          if(!p.dead)
+            physics.tankMove(p.pos, p.move, actMap)
+      }, 20);
+    };
     
     p.quit = function(){
+      if(players[p.sId].joined)
+         joinedPl--;
+      console.log(joinedPl);
       delete players[p.sId];
-      alivePl--;
-      update({'players': players});
+      if(!p.dead)
+        alivePl--;
+      update({'players': players, 'joinedCount': joinedPl});
+      if(joinedPl < 2){
+        for(id in bullets)
+          bullets[id].remove();
+        update({'bulltes': bullets});
+      }
       handleEnd()
     };
+    
     p.kill = function(){
       p.dead = true;
       alivePl--;
-      update({'players': players});
+      update({'players': players, 'joinedCount': joinedPl});
       handleEnd()
     };
     
@@ -182,17 +214,12 @@ module.exports.start = function(update){
     }
     
     p.col = ""+getHex(Math.round(Math.random()*254))+getHex(Math.round(Math.random()*254))+getHex(Math.round(Math.random()*254));
-    p.bullets = 5;
     players[p.sId] = p;
     p.changeMap(actMap);
     p.sendBul(bullets);
    
-    setInterval(function(){
-      if(!p.dead)
-        physics.tankMove(p.pos, p.move, actMap)
-    }, 20);
-    
     p.shoot = function(){
+      if(joinedPl < 2) return;
       if(p.dead) return;
       if(p.bullets <= 0) return;
       p.bullets--;
@@ -216,10 +243,10 @@ module.exports.start = function(update){
       update({'bullets': {[bullet.id]: bullet}});
     };
     
-    update({'players': players});
+    update({'players': players, 'joinedCount': joinedPl});
   };
   this.nextMap = function(){
-    update({'map': newMap(), 'players': players, 'bullets': bullets});
+    update({'map': newMap(), 'players': players, 'joinedCount': joinedPl, 'bullets': bullets});
   };
   
   this.nextMap();

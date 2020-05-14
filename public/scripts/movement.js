@@ -5,6 +5,7 @@ window.addEventListener("load", function(event) {
   var move = {'front': false, 'back': false, 'left': false, 'right': false};
   
   clearJoys = function(){
+    move = {'front': false, 'back': false, 'left': false, 'right': false};
     for(id in touches){
       touches[id].joy.parentElement.removeChild(touches[id].joy);
       delete touches[id];
@@ -70,13 +71,14 @@ window.addEventListener("load", function(event) {
     }
   
   document.body.addEventListener('touchstart', function(e){
-    e.preventDefault();
+    
     for(var i = 0; i < e.changedTouches.length; i++){
       var id = e.changedTouches[i].identifier;
       touches[id] = {
         'startX': e.changedTouches[i].pageX,
         'startY': e.changedTouches[i].pageY,
-        'startTime': +new Date()
+        'startTime': +new Date(),
+        'type': e.changedTouches[i].pageX < window.innerWidth/2 ? 0 : 1
       };
       
       var joy = document.createElement('canvas');
@@ -94,7 +96,6 @@ window.addEventListener("load", function(event) {
   });
   
   document.body.addEventListener('touchmove', function(e){
-    e.preventDefault();
     for(var i = 0; i < e.changedTouches.length; i++){
       var id = e.changedTouches[i].identifier;
       drawJoystick(e.changedTouches[i].pageX - touches[id].startX + 100, e.changedTouches[i].pageY - touches[id].startY + 100, touches[id].joy);
@@ -131,7 +132,10 @@ window.addEventListener("load", function(event) {
       }
       
       if(change){
-        socket.emit('move', move);
+        if(tutorialStarted)
+          tutMove(move);
+        else
+          socket.emit('move', move);      
       }
     }
   });
@@ -141,14 +145,17 @@ window.addEventListener("load", function(event) {
     for(var i = 0; i < e.changedTouches.length; i++){
       var id = e.changedTouches[i].identifier;
       
-      console.log(e);
-      if(+new Date() - touches[id].startTime < 250 && e.target == document.getElementById('controls'))
-        socket.emit('shoot');
-      
-      move = {'front':false, 'back':false,'left':false,'right':false};
-      
-      socket.emit('move', move);
-      
+      if(+new Date() - touches[id].startTime < 250 && e.target == document.getElementById('controls')){
+        if(tutorialStarted) tutShoot();
+        else socket.emit('shoot');
+      }
+      if(touches[id].type === 1){
+        move = {'front':false, 'back':false,'left':false,'right':false};
+        if(tutorialStarted)
+          tutMove(move);
+        else
+          socket.emit('move', move);
+      }
       touches[id].joy.parentElement.removeChild(touches[id].joy);
       delete touches[id];
     }
@@ -183,11 +190,17 @@ window.addEventListener("load", function(event) {
         }
         break;
       case 32:
-        socket.emit("shoot");
+        if(tutorialStarted)
+          tutShoot();
+        else
+          socket.emit("shoot");
         break;
     }
     if(change)
-      socket.emit("move", move);
+      if(tutorialStarted){
+        tutMove(move);
+      }else
+        socket.emit("move", move);
   });
   document.body.addEventListener('keyup', function(e){
     var change = false;
@@ -216,18 +229,34 @@ window.addEventListener("load", function(event) {
           move.back = false;
         }
         break;
-          case 77:
-        socket.emit("nextMap");
+      case 77:
+        //socket.emit("nextMap");
         break;
     }
     if(change)
-      socket.emit("move", move);
+      if(tutorialStarted){
+        tutMove(move);
+      }else
+        socket.emit("move", move);
   });
-  document.getElementById('fullscreenBtn').addEventListener('click', function(){
+  document.getElementById('fullscreenBtnImg').addEventListener('click', function(){
     if(!(document.fullscreenElement && document.fullscreenElement !== null))
       document.body.requestFullscreen();
     else
       document.exitFullscreen();
     
+  });
+  document.getElementById('Form').addEventListener('submit', function(e){
+    e.preventDefault();
+    var nick = document.getElementById("NickInput").value;
+    var tutorial = document.getElementById("TutorialInput").checked;
+    nick = nick.replace(/\s/g,'');
+    if(nick === "") nick = "guest";
+    document.getElementById('Form').style.display = "none";
+    document.getElementById('background').style.zIndex = 1;
+    if(tutorial)
+      startTutorial(nick);
+    else
+      socket.emit("join", nick);
   });
 });
