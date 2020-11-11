@@ -96,6 +96,7 @@ window.addEventListener("load", function(event) {
   });
   
   document.body.addEventListener('touchmove', function(e){
+    
     for(var i = 0; i < e.changedTouches.length; i++){
       var id = e.changedTouches[i].identifier;
       drawJoystick(e.changedTouches[i].pageX - touches[id].startX + 100, e.changedTouches[i].pageY - touches[id].startY + 100, touches[id].joy);
@@ -110,7 +111,7 @@ window.addEventListener("load", function(event) {
         
         change = true;
       }else{
-        if(touches[id].startY - e.changedTouches[id].pageY > 25){
+        if(touches[id].startY - e.changedTouches[id].pageY > 0){
           if(!move.front){
             move.front = true;
             change = true;
@@ -120,7 +121,7 @@ window.addEventListener("load", function(event) {
           change = true;
         }
         
-        if(touches[id].startY - e.changedTouches[i].pageY < -25){
+        if(touches[id].startY - e.changedTouches[i].pageY < 0){
           if(!move.back){
             move.back = true;
             change = true;

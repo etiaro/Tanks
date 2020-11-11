@@ -1,11 +1,13 @@
 body, html { 
   overflow: hidden; 
+  touch-action: manipulation;
 }
 body{
   padding: 0;
   margin: 0;
   background-color: WHITE;
   color: BLACK;
+  touch-action: manipulation;
 }
 #fullscreenBtn{
   position: fixed;
@@ -13,6 +15,7 @@ body{
   bottom: 0;
   z-index: 10;
   cursor: pointer;
+  touch-action: manipulation;
 }
 #waiting{
   height: 100%;
@@ -20,6 +23,7 @@ body{
   position: relative;
   background-color: rgba(0,0,0,0.8);
   z-index: 11;
+  touch-action: manipulation;
 }
 .waiting{
   position: absolute;
@@ -30,12 +34,14 @@ body{
   font-family: 'Balsamiq Sans', cursive;
   font-size: 1.5em;
   text-align: center;
+  touch-action: manipulation;
 }
 #background{
   position: fixed; 
   width: 100vw; 
   height: 100vh; 
   z-index: 100;
+  touch-action: manipulation;
 }
 #Form{
   position: absolute;
@@ -43,6 +49,7 @@ body{
   z-index: 101;
   left: 50%;
   transform: translate(-50%, -50%);
+  touch-action: manipulation;
 }
 .checkspan{
   position: relative;
@@ -52,6 +59,7 @@ body{
   font-size: 2em;
   font-family: 'Balsamiq Sans', cursive;
   color: WHITE;
+  touch-action: manipulation;
 }
 input[type=checkbox]{
   position: absolute;
@@ -59,6 +67,7 @@ input[type=checkbox]{
   cursor: pointer;
   height: 0;
   width: 0;
+  touch-action: manipulation;
 }
 .ccheckbox{  
   position: absolute;
@@ -68,17 +77,21 @@ input[type=checkbox]{
   width: 0.6em;
   border: solid white;
   border-radius: 0.13em;
+  touch-action: manipulation;
 }
 .checkspan:hover input ~ .ccheckbox{
   background-color: rgba(0,0,0,0.15);
+  touch-action: manipulation;
 }
 .checkspan:checked input ~ .ccheckbox{
   background-color: #2196F3;
+  touch-action: manipulation;
 }
 .ccheckbox:after {
   content: "";
   position: absolute;
   display: none;
+  touch-action: manipulation;
 }
 .checkspan .ccheckbox:after {
   left: 0.2em;
@@ -88,10 +101,12 @@ input[type=checkbox]{
   border: solid white;
   border-width: 0 0.08em 0.08em 0;
   transform: rotate(45deg);
+  touch-action: manipulation;
 }
 /* Show the checkmark when checked */
 .checkspan input:checked ~ .ccheckbox:after {
   display: block;
+  touch-action: manipulation;
 }
 button{
   padding: 5px;
@@ -105,10 +120,12 @@ button{
   font-family: 'Balsamiq Sans', cursive;
   float: right;
   cursor: pointer;
+  touch-action: manipulation;
 }
 button:hover, button:focus{
   background-color: rgba(0,0,0,0.15);
   outline: none;
+  touch-action: manipulation;
 }
 input[type=text]{
   padding: 5px;
@@ -122,12 +139,15 @@ input[type=text]{
   border-radius: 10px;
   font-family: 'Balsamiq Sans', cursive;
   margin-bottom: 0.5em;
+  touch-action: manipulation;
 }
 input[type=text]::placeholder{
   color: rgba(255, 255, 255, 0.4);
+  touch-action: manipulation;
 }
 input[type=text]:hover, input[type=text]:focus{
   background-color: rgba(0,0,0,0.15);
+  touch-action: manipulation;
   outline: none;
 }
 #controls{
@@ -136,6 +156,7 @@ input[type=text]:hover, input[type=text]:focus{
   height: 100vh; 
   background: rgba(0,0,0,0); 
   z-index: 9;
+  touch-action: manipulation;
 }
 #scoreboard{
   position: fixed; 
@@ -148,19 +169,23 @@ input[type=text]:hover, input[type=text]:focus{
   font-family: 'Oswald', sans-serif;
   overflow-y: auto;
   overflow-x: hidden;
+  touch-action: manipulation;
 }
 .joystick{
   position:fixed;
   top:0;left:0;
   background: rgba(0,0,0,0);
   z-index:6;
+  touch-action: manipulation;
 }
 .scoreEl{ 
   font-size: 3em; 
+  touch-action: manipulation;
 }
 .parHelper{ 
   float: bottom; 
   width: 100%; 
+  touch-action: manipulation;
 }
 
 #TutorialText{
@@ -177,4 +202,5 @@ input[type=text]:hover, input[type=text]:focus{
   z-index: 8;
   transition: opacity 1s;
   transition-timing-function: ease-in;
+  touch-action: manipulation;
 }

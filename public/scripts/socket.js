@@ -1,4 +1,9 @@
 var socket = io();
+setTimeout(function(){
+  if(!document.getElementById("background").style.backgroundColor)
+    window.location.reload();  
+}, 5000);
+
 var updatePlayers = ()=>{};
 var updateMap = ()=>{};
 var updateBullets = (b)=>{};
@@ -36,7 +41,7 @@ window.addEventListener('load', function() {
     }
     
     for(id in pls){
-      var pl = document.getElementById('pl'+id);//TODO add wrapper div which contains player and playernick, translate wrapper and rotate only player
+      var pl = document.getElementById('pl'+id);
       pls[id].lastTime = Date.now();
       if(pls[id].sId == sId){
         document.getElementById("background").style.backgroundColor = "#"+pls[id].col;

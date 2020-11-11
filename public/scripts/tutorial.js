@@ -30,7 +30,7 @@ var tutMove = function(move){
   pls[sId].move = move;
   if(tutorialLvl == 1 && (move.front || move.back)){
     setTimeout(()=>{
-                tutWrite("Press A and D or move joystick on left side of screen to turn around", 
+                tutWrite("Press LEFT and RIGHT arrows or move joystick on left side of screen to turn around", 
                function(){
                  tutorialLvl = 3;
                })
@@ -130,7 +130,7 @@ var startTutorial = function(nick){
   
   tutWrite("Welcome "+nick+"!");
   setTimeout(()=>{
-              tutWrite("Press W and S or move slider on right side of screen to drive front and back", 
+              tutWrite("Press FRONT and BACK arrows or move slider on right side of screen to drive front and back", 
              function(){
                tutorialLvl=1;
              })
